@@ -1,0 +1,39 @@
+name: Daily Blog Monitor
+
+on:
+  schedule:
+    # Esegue lo script ogni giorno alle 09:00 UTC (10:00 o 11:00 in Italia)
+    - cron: '0 9 * * *'
+  workflow_dispatch: # Permette di avviarlo manualmente per testare
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository content
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - - name: Execute Python script
+      env:
+        # Passa il secret come variabile d'ambiente
+        DROPBOX_ACCESS_TOKEN: ${{ secrets.DROPBOX_ACCESS_TOKEN }}
+      run: python monitor_tippy.py
+
+    - name: Commit and push if state changed
+      run: |
+        git config --global user.name "GitHub Action"
+        git config --global user.email "action@github.com"
+        git add tippy_state.json tippy_monitor.log
+        git commit -m "Update state and logs" || exit 0
+        git push
