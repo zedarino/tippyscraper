@@ -193,9 +193,7 @@ def download_fumetto(post_url, post_title):
     if cbz_temp:
         # Sposta e pulisce duplicati
         final_file = remove_duplicate_pages(cbz_temp)
-       if cbz_temp:
-        final_file = remove_duplicate_pages(cbz_temp)
-        
+            
         # NUOVA LOGICA: Caricamento su Dropbox
         dbx_destination = f"/Fumetti_Tippy/{final_file.name}"
         upload_to_dropbox(final_file, dbx_destination)
