@@ -2,9 +2,8 @@ name: Daily Blog Monitor
 
 on:
   schedule:
-    # Esegue lo script ogni giorno alle 09:00 UTC (10:00 o 11:00 in Italia)
     - cron: '0 9 * * *'
-  workflow_dispatch: # Permette di avviarlo manualmente per testare
+  workflow_dispatch:
 
 jobs:
   build:
@@ -26,8 +25,6 @@ jobs:
 
     - name: Execute Python script
       env:
-        # Passa il secret come variabile d'ambiente
-        DROPBOX_ACCESS_TOKEN: ${{ secrets.DROPBOX_ACCESS_TOKEN }}
         DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
         DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
         DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
@@ -35,8 +32,8 @@ jobs:
 
     - name: Commit and push if state changed
       run: |
-        git config --global user.name "GitHub Action"
-        git config --global user.email "action@github.com"
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add tippy_state.json tippy_monitor.log
         git commit -m "Update state and logs" || exit 0
         git push
